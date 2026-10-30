@@ -145,7 +145,8 @@ If either starts right after this run, keep the shards until it finishes. Otherw
 rebuild costs ~2–3 h of CPU and no GPU.
 
 ### 5.2 and 5.3 Prove the rebuild, then delete
-Check out the commit the shards were written at (it is in every part's `meta.json`), then:
+From the repository root (any checkout whose export builds to the same bundle; the script names
+the commit to check out if it does not):
 
 ```sh
 node scripts/procedural-clean.ts --root .cache/procedural --runs ml/runs/R0a,ml/runs/R0b,ml/runs/R1,ml/runs/R2 --dry-run
@@ -153,9 +154,8 @@ node scripts/procedural-clean.ts --root .cache/procedural --runs ml/runs/R0a,ml/
 ```
 
 Before deleting anything it:
-- refuses unless every run has finished, HEAD is the recorded commit, and the source has no
-  uncommitted changes;
-- rebuilds the export script and refuses unless it hashes to the build recorded in `meta.json`;
+- refuses unless every run has finished and the installed three is the recorded version;
+- builds the export script and refuses unless it hashes to the build recorded in `meta.json`;
 - regenerates the first shard of `part-0` and `part-7` and refuses unless the points and rows match
   the shards on disk byte for byte. If they don't, the data isn't reproducible: keep the shards and
   find out why.
