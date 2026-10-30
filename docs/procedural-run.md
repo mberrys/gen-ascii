@@ -37,9 +37,11 @@ All six landed together, in one PR on top of `feat/procedural-data` (#66).
    - `CloudDataset.batch` draws each batch slot from a folder group by weight, then a row inside it.
      Without weights, a million procedural rows would drown 20,000 Objaverse rows at 98 to 2.
    - `train.json` records every folder's manifest: index, screening, commit and rows.
-4. **Encode each unique caption once.** Procedural captions are templated, so a million rows hold
-   only a few thousand distinct sentences. Encode the unique set and index into it, instead of
-   running MiniLM a million times on the CPU.
+4. **Encode each unique caption once.** Procedural captions are templated: measured over 5,400
+   rows, the nine forms say 236 distinct sentences, and the count stops growing by about 300 seeds.
+   A million rows still hold 236, so encode those and index into them, instead of running MiniLM a
+   million times on the CPU. It also means the procedural data teaches shape far more than it
+   teaches words: a million clouds share 236 captions.
 5. **bf16 autocast in the training step.** The 3090 supports it. It roughly halves step time for the
    larger models, and checkpoints stay fp32.
 6. **`scripts/procedural-clean.ts`**, the delete step in section 5 as code:
