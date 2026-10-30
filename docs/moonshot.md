@@ -21,7 +21,8 @@ Not attempted, with the dependency that blocks each:
 
 | plan step | why not |
 |---|---|
-| A2, A4, A5 (a local judge, legibility metrics, a scheduled run) | A2 needs A1's prompts rendered and judged first, which the run just committed makes possible; A4 and A5 are the next week of harness work |
+| A2 a local judge | done, at `ml/cloudgen/cheap_judge.py`: 77.5 per cent agreement with the full judge on held-out images, see `docs/cheap-judge.md` |
+| A4, A5 (legibility metrics, a scheduled run) | the next week of harness work, and A5 needs a green main to schedule against |
 | B1, B3 (profile, WebGPU) | needs real-device traces and three's TSL port; nothing in this session could verify a 60 fps claim |
 | C1 to C4 (larger pool, procedural data, teacher pipeline, re-captioning) | each is a batch job measured in hours of downloads and model calls |
 | D1 to D6 (scale, colour, distillation, medium-aware tuning, ONNX, hosting) | needs the 100M to 250M parameter sweeps on a cluster, and D5's quantisation needs the student D3 produces |
