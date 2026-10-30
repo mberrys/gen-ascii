@@ -14,12 +14,14 @@ command in this repository that can be rerun.
 | B4 a trajectory API on the stage | #59 | `stageApi.stream`, stated in `docs/contracts.md` |
 | I1 an ANSI renderer | #61 | truecolor, half block, diffed frames |
 | I2 the CLI | #62 | `npm run cli -- teapot` |
+| A1 1,000 public prompts and 200 sealed held-out | this PR | `bench/prompts.jsonl`, `bench/held-out.jsonl.enc`, `scripts/held-out.ts --check` |
+| A3 scoring a training run's own samples | this PR | `bench/score.ts`, one warm tab, `score.json` a loop can read |
 
 Not attempted, with the dependency that blocks each:
 
 | plan step | why not |
 |---|---|
-| A1 to A5 (1,000 prompts, a local judge, Node scoring, legibility metrics, a scheduled run) | A3 needs B2, which landed; the rest is a week of harness work, and a judge trained on 200 prompts is a judge trained on too little |
+| A2, A4, A5 (a local judge, legibility metrics, a scheduled run) | A2 needs A1's prompts rendered and judged first, which the run just committed makes possible; A4 and A5 are the next week of harness work |
 | B1, B3 (profile, WebGPU) | needs real-device traces and three's TSL port; nothing in this session could verify a 60 fps claim |
 | C1 to C4 (larger pool, procedural data, teacher pipeline, re-captioning) | each is a batch job measured in hours of downloads and model calls |
 | D1 to D6 (scale, colour, distillation, medium-aware tuning, ONNX, hosting) | needs the 100M to 250M parameter sweeps on a cluster, and D5's quantisation needs the student D3 produces |
