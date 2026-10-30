@@ -71,6 +71,18 @@ Passes when:
 
 Then delete `.cache/procedural/pilot`.
 
+**Passed** at d95b3bc. The export took 638 s in one process (71 ms a cloud), so eight processes
+should finish the million in about 2.5 h. The pilot wrote:
+- 9,000 rows, 9,000 distinct uids and 236 distinct captions;
+- every point within radius 1.0003, and every normal unit length to within 0.0004;
+- no colour arrays, and `meta.json` carrying the commit and the bundle hash.
+
+Twenty random clouds, rendered, all read as their captions. They included a (2, 5) knot, a four-,
+eight- and twelve-sided crystal, the helices, asteroids, a Klein bottle, a shell and a teapot.
+Training ran 2,000 bf16 steps in 4.3 min, and loss fell from 1.57 to 0.43. `train.json` named both
+folders with their screening, and the procedural one with its commit. MiniLM encoded the 14,661
+distinct captions among 28,980 rows in 20 s. The pilot data and checkpoints were then deleted.
+
 ## 3. Generate: a million clouds in eight processes
 
 Build the bundle once, then run eight processes on separate seed ranges into separate folders. Don't
@@ -116,15 +128,23 @@ npm run score -- --samples ml/runs/<run>/samples
 
 The held-out 200 are used once, on the final pick.
 
-| run | model | data | steps | estimate on the 3090 |
+| run | model | data | steps | time on the 3090, bf16 |
 |---|---|---|---|---|
-| **R0a** | 37.7M (384 / 10 / 6) | Objaverse only | 30,000 | ~2 h (0.22 s a step, measured) |
-| **R0b** | 37.7M | 75% Objaverse, 25% procedural | 30,000 | ~2 h |
-| **R1** | ~100M (640 / 14 / 10) | the better of R0a and R0b | 60,000 | ~6–8 h with bf16 |
-| **R2** | ~250M (1024 / 14 / 16) | same | 60,000 | ~15–20 h with bf16 |
+| **R0a** | 37.7M (384 / 10 / 6) | Objaverse only | 30,000 | ~1.1 h |
+| **R0b** | 37.7M | 75% Objaverse, 25% procedural | 30,000 | ~1.1 h |
+| **R1** | 145.1M (640 / 14 / 10) | the better of R0a and R0b | 60,000 | ~3.5 h |
+| **R2** | 370.5M (1024 / 14 / 16) | same | 60,000 | ~7.2 h |
 
-The model column is width / depth / heads. The 100M and 250M sizes are approximate: use the count
-`train.py` prints.
+The model column is width / depth / heads, and the counts are what `train.py` printed. Every run
+uses `--precision bf16`. The times come from the pilot's step rates at batch 32:
+
+| model | fp32 s a step | bf16 s a step | speed-up |
+|---|---|---|---|
+| 37.7M | 0.176 | 0.13 | 1.4× |
+| 145.1M | 0.612 | 0.208 | 2.9× |
+| 370.5M | 1.39 | 0.432 | 3.2× |
+
+The bf16 and fp32 losses after 350 steps agreed to the fourth decimal at both larger sizes.
 
 **R0a against R0b is the decision that matters.** It's the first full 30,000-step run; the baseline
 stopped at 9,600. It answers whether procedural data helps at all:
